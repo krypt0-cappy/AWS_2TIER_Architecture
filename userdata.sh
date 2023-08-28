@@ -1,8 +1,13 @@
 #!/bin/sh
 sudo yum update -y
-sudo yum -y install httpd
-sudo systemctl enable httpd
-sudo systemctl start httpd.service
+sudo dnf install httpd
+sudo systemctl start httpd
+sudo systemctl status httpd
+sudo systemctl enable --now httpd
+# sudo service httpd start
+# sudo chkconfig httpd on
+# sudo systemctl start httpd.service
+# sudo systemctl enable httpd
 sudo firewall-cmd --permanent --zone=public --add-service=http
 sudo firewall-cmd --reload
 sudo touch /var/www/html/index.html

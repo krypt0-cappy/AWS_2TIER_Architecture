@@ -9,7 +9,7 @@ resource "aws_lb" "main-loadbalancer" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [var.web_sg]
-  subnets            = tolist(var.public-subnet)
+  subnets            = var.public-subnet
 }
 
 
