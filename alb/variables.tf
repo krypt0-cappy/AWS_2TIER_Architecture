@@ -1,7 +1,7 @@
 ###---ALB/VARIABLES.TF---###
 
 
-variable "private-subnet" {}
+variable "public-subnet" {}
 variable "vpc_id" {}
 variable "web_sg" {}
 variable "target_group_port" {

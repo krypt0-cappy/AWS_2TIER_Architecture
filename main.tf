@@ -42,7 +42,7 @@ module "asg" {
 module "alb" {
   source         = "./alb"
   vpc_id         = module.vpc.vpc_id
-  private-subnet = module.vpc.private-subnet
+  public-subnet = module.vpc.public-subnet
   web_sg         = module.vpc.web_sg
 }
 
