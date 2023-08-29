@@ -1,31 +1,35 @@
 ###---ASG/MAIN.TF---###
 
 
-##############################
-# CREATE ASG LAUNCH TEMPLATE #
-##############################
+###################################
+# CREATE ASG LAUNCH CONFIGURATION #
+###################################
 
-resource "aws_launch_template" "main-launch-template" {
-  name                   = "ApacheWebserverLaunchTemplate"
-  image_id               = var.image_id
-  instance_type          = var.instance_type
-  key_name               = var.key_name
-  vpc_security_group_ids = [var.app_sg]
-  user_data              = filebase64("userdata.sh")
+resource "aws_launch_configuration" "main-launch-configuration" {
+    name = "ApacheWebserverLaunchConfiguration"
+    image_id = var.image_id
+    instance_type = var.instance_type
+    key_name = var.key_name
+    security_groups = [var.app_sg]
 
-  block_device_mappings {
-    device_name = "/dev/sda1"
-    ebs {
+    root_block_device {
       volume_size = 20
       volume_type = "gp2"
     }
-  }
+
+     user_data = <<-EOF
+                #!/bin/bash
+                yum update -y
+                yum install httpd -y
+                systemctl start httpd
+                systemctl enable httpd
+                EOF
 }
 
 
 #############################
 # CREATE AUTO SCALING GROUP #
-##############################
+#############################
 
 resource "aws_autoscaling_group" "main-asg" {
   name_prefix               = "AutoScalingGroupInstances"
@@ -37,8 +41,5 @@ resource "aws_autoscaling_group" "main-asg" {
   force_delete              = true
   vpc_zone_identifier       = tolist(var.private-subnet)
   target_group_arns         = [var.target_group_arn]
-
-  launch_template {
-    id = aws_launch_template.main-launch-template.id
-  }
+  launch_configuration = aws_launch_configuration.main-launch-configuration.name
 }
