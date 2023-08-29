@@ -6,18 +6,18 @@
 ###################################
 
 resource "aws_launch_configuration" "main-launch-configuration" {
-    name = "ApacheWebserverLaunchConfiguration"
-    image_id = var.image_id
-    instance_type = var.instance_type
-    key_name = var.key_name
-    security_groups = [var.app_sg]
+  name            = "ApacheWebserverLaunchConfiguration"
+  image_id        = var.image_id
+  instance_type   = var.instance_type
+  key_name        = var.key_name
+  security_groups = [var.app_sg]
 
-    root_block_device {
-      volume_size = 20
-      volume_type = "gp2"
-    }
+  root_block_device {
+    volume_size = 20
+    volume_type = "gp2"
+  }
 
-     user_data = <<-EOF
+  user_data = <<-EOF
                 #!/bin/bash
                 yum update -y
                 yum install httpd -y
@@ -41,5 +41,5 @@ resource "aws_autoscaling_group" "main-asg" {
   force_delete              = true
   vpc_zone_identifier       = tolist(var.private-subnet)
   target_group_arns         = [var.target_group_arn]
-  launch_configuration = aws_launch_configuration.main-launch-configuration.name
+  launch_configuration      = aws_launch_configuration.main-launch-configuration.name
 }

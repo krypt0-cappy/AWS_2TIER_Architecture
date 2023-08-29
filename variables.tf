@@ -2,19 +2,19 @@
 
 
 variable "region" {
-  type = string
+  type    = string
   default = "us-east-1"
 }
 variable "instance_type" {
-  type = string
+  type    = string
   default = "t2.micro"
 }
 variable "key_name" {
-  type = string
+  type    = string
   default = "coalfire_tech_challenge_keypair"
 }
 variable "image_id" {
-  type = string
+  type    = string
   default = "ami-026ebd4cfe2c043b2"
 }
 variable "access_ip" {

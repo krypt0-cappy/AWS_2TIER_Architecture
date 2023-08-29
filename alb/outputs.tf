@@ -10,5 +10,5 @@ output "loadbalancer" {
 }
 
 output "loadbalancer_dns" {
-    value = aws_lb.main-loadbalancer.dns_name
+  value = aws_lb.main-loadbalancer.dns_name
 }
