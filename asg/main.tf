@@ -1,31 +1,23 @@
 ###---ASG/MAIN.TF---###
 
 
-###################################
-# CREATE ASG LAUNCH CONFIGURATION #
-###################################
+##############################
+# CREATE ASG LAUNCH TEMPLATE #
+##############################
 
-resource "aws_launch_configuration" "main-launch-configuration" {
-  name            = "ApacheWebserverLaunchConfiguration"
-  image_id        = var.image_id
-  instance_type   = var.instance_type
-  key_name        = var.key_name
-  security_groups = [var.app_sg]
 
-  root_block_device {
-    volume_size = 20
-    volume_type = "gp2"
+resource "aws_launch_template" "main-launch-template" {
+  name                   = "ApacheWebserverLaunchTemplate"
+  image_id               = var.image_id
+  instance_type          = var.instance_type
+  key_name               = var.key_name
+  vpc_security_group_ids = [var.app_sg]
+  user_data              = filebase64("userdata.sh")
+
+  tags = {
+    Name = "ApacheWebserverLaunchTemplate"
   }
-
-  user_data = <<-EOF
-                #!/bin/bash
-                yum update -y
-                yum install httpd -y
-                systemctl start httpd
-                systemctl enable httpd
-                EOF
 }
-
 
 #############################
 # CREATE AUTO SCALING GROUP #
@@ -41,5 +33,9 @@ resource "aws_autoscaling_group" "main-asg" {
   force_delete              = true
   vpc_zone_identifier       = tolist(var.private-subnet)
   target_group_arns         = [var.target_group_arn]
-  launch_configuration      = aws_launch_configuration.main-launch-configuration.name
+
+  launch_template {
+    id      = aws_launch_template.main-launch-template.id
+    version = "$Latest"
+  }
 }
